@@ -1,0 +1,83 @@
+SQL SCHEMA
+Project 1 Part 2
+Andrew Calimlim (amc2391) and Yang Shi (ys3047)
+
+CREATE TABLE Airlines (
+al_code CHAR(10),
+al_name CHAR(50) UNIQUE,
+PRIMARY KEY (al_code) )
+
+CREATE TABLE Plane_Uses (
+al_code CHAR(10),
+pl_code CHAR(20),
+PRIMARY KEY (pl_code),
+FOREIGN KEY (al_code) REFERENCES Airlines
+    ON DELETE NO ACTION)
+
+CREATE TABLE Passengers (
+pa_name CHAR(40) NOT NULL,
+pa_code CHAR(20),
+PRIMARY KEY (pa_code) )
+
+CREATE TABLE Flight_Does (
+f_code CHAR(20),
+PRIMARY KEY (f_code))
+
+Note: We recognize that Planes has total participation in Does without a key constraint. We would like to mention that we currently cannot capture such participation constraints in SQL.
+
+CREATE TABLE Books (
+s_row CHAR(3),
+s_column CHAR(2),
+price REAL CHECK (price > 0),
+class CHAR(15) NOT NULL,
+b_zone INTEGER CHECK (b_zone > 0),
+pa_code CHAR(20),
+f_code CHAR(20),
+PRIMARY KEY (pa_code, s_row, s_column, f_code),
+FOREIGN KEY (pa_code) REFERENCES Passengers
+    ON DELETE CASCADE,
+FOREIGN KEY (f_code) REFERENCES Flight_Does
+    ON DELETE NO ACTION)
+
+Note: We recognize that Flights and Passengers both total participation in Books without a key constraint. We would like to mention that we currently cannot capture such participation constraints in SQL.
+
+
+
+CREATE TABLE Airports (
+ap_name CHAR(50) UNIQUE,
+ap_code CHAR(10),
+PRIMARY KEY (ap_code) )
+
+CREATE TABLE Gate_Resides_At (
+g_code CHAR(10),
+ap_code CHAR(10),
+PRIMARY KEY (g_code, ap_code),
+FOREIGN KEY (ap_code) REFERENCES Airports
+    ON DELETE NO ACTION)
+
+Note: We recognize that Airports has total participation in Gate_Resides_At without a key constraint. We would like to mention that we currently cannot capture such participation constraints in SQL.
+
+
+CREATE TABLE Flight_Arr_To(
+f_code CHAR(20),
+g_code CHAR(10),
+ap_code CHAR(10),
+a_time CHAR(20),
+a_date DATE,
+PRIMARY KEY (f_code, g_code, ap_code, a_time, a_date),
+FOREIGN KEY (f_code) REFERENCES Flight_Does
+ON DELETE NO ACTION,
+FOREIGN KEY (g_code, ap_code) REFERENCES Gate_Resides_At
+ON DELETE NO ACTION);
+
+CREATE TABLE Flight_Dep_From(
+f_code CHAR(20),
+g_code CHAR(10),
+ap_code CHAR(10),
+d_time CHAR(20),
+d_date DATE,
+PRIMARY KEY (f_code, g_code , ap_code, d_time, d_date),
+FOREIGN KEY (f_code) REFERENCES Flight_Does
+ON DELETE NO ACTION,
+FOREIGN KEY (g_code, ap_code) REFERENCES Gate_Resides_At
+ON DELETE NO ACTION);
